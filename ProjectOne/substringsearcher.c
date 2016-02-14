@@ -20,6 +20,7 @@ int main(int argc, char** argv){
     //check if flag for system call was passed in
     int isFlag = strcmp(argv[1],"-s") == 0 ? 1 : 0;
 
+    //variables for time measurement
     float secs_used,micros_used;
     struct timeval start,end;
 
@@ -28,6 +29,7 @@ int main(int argc, char** argv){
     //if flag wasn't used...
     if(!isFlag){
 
+      //get starting time
       gettimeofday(&start,NULL);
       //filename is the second argument after the executable name
       char* filename = argv[1];
@@ -111,6 +113,7 @@ int main(int argc, char** argv){
 
       }
 
+      //get ending time then calculate milliseconds past
       gettimeofday(&end,NULL);
 
       secs_used = (end.tv_sec - start.tv_sec);
@@ -121,6 +124,7 @@ int main(int argc, char** argv){
     //if flag was passed in
     else{
 
+        //get starting time
         gettimeofday(&start,NULL);
         //get filename
         char* filename = argv[2];
@@ -198,6 +202,7 @@ int main(int argc, char** argv){
 
         }
 
+        //get ending time then calculate milliseconds past
         gettimeofday(&end,NULL);
 
         secs_used = (end.tv_sec - start.tv_sec);
