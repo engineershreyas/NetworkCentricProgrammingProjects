@@ -18,7 +18,13 @@ int main(int argc, char** argv){
       return 1;
     }
 
-    strcpy(filename. ".txt");
+
+    char* truefilename = malloc(strlen(filename) + strlen(".txt"));
+    strcpy(truefilename, filename);
+    strcat(truefilename,".txt");
+
+    printf("%s\n",truefilename);
+
 
     //create an array for all the substrings passed in
     char* buffer[size];
@@ -44,7 +50,7 @@ int main(int argc, char** argv){
 
 
     //open the file
-    fp = fopen(filename,"r");
+    fp = fopen(truefilename,"r");
     if(fp == NULL){
       printf("File does not exist!\n");
       return 2;
@@ -71,7 +77,7 @@ int main(int argc, char** argv){
           }
 
           //print the count of the substring in the file for the word
-          printf("count : %d for %s\n in word %s",count, substring,line);
+          printf("count : %d for %s in word %s\n",count, substring,line);
           //put count back to zero
           count = 0;
 
