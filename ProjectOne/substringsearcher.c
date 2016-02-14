@@ -13,6 +13,13 @@ int main(int argc, char** argv){
     //filename is the second argument after the executable name
     char* filename = argv[1];
 
+    if(filename == NULL || strlen(filename) < 1){
+      printf("Oops, you must enter a filename!\n");
+      return 1;
+    }
+
+    strcpy(filename. ".txt");
+
     //create an array for all the substrings passed in
     char* buffer[size];
 
@@ -38,7 +45,10 @@ int main(int argc, char** argv){
 
     //open the file
     fp = fopen(filename,"r");
-
+    if(fp == NULL){
+      printf("File does not exist!\n");
+      return 2;
+    }
 
     //for each line in the file...
     while((read = getline(&line, &len, fp)) != -1) {
