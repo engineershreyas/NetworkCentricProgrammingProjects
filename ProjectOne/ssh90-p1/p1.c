@@ -7,8 +7,9 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/time.h>
+#include <sys/stat.h>
 
-#define MAX_SIZE 1024
+
 
 /*written by Shreyas Hirday*/
 
@@ -29,8 +30,7 @@ int main(int argc, char** argv){
     //if flag wasn't used...
     if(!isFlag){
 
-      //get starting time
-      gettimeofday(&start,NULL);
+      
       //filename is the second argument after the executable name
       char* filename = argv[1];
 
@@ -79,7 +79,7 @@ int main(int argc, char** argv){
       //open the file
       fp = fopen(truefilename,"r");
       if(fp == NULL){
-        printf("File does not exist!\n");
+        printf("./p1: No such file or directory\n");
         return 2;
       }
 
@@ -113,19 +113,13 @@ int main(int argc, char** argv){
 
       }
 
-      //get ending time then calculate milliseconds past
-      gettimeofday(&end,NULL);
 
-      secs_used = (end.tv_sec - start.tv_sec);
-      micros_used = (secs_used * 1000000 + end.tv_usec) - (start.tv_usec);
-      printf("milliseconds passed: %f\n",micros_used/1000);
 
     }
     //if flag was passed in
     else{
 
-        //get starting time
-        gettimeofday(&start,NULL);
+
         //get filename
         char* filename = argv[2];
 
@@ -158,21 +152,32 @@ int main(int argc, char** argv){
 
         //get file descriptor of file to read
         int file_descriptor = open(result,O_RDONLY);
+        unsigned file_size = 0;
+        struct stat sb;
         //make sure file exists
         if(file_descriptor == -1){
-          printf("File doesn't exist!\n");
+          printf("./p1: No such file or directory\n");
           return 2;
         }
+        else{
+          //get size of file
+          stat(result, &sb);
+          file_size = sb.st_size;
+        }
 
-        //allocate string buffer for a line in the file
-        char buffer[MAX_SIZE];
+
+        //allocate string buffer for size of file
+        char *buffer = malloc(file_size * sizeof(char));
+
         //lets us know if string exists or not
         int n = 0;
         //variable for count of substring
         int count = 0;
 
+
+
         //for each line in the file
-        while((n = read(file_descriptor,buffer,sizeof(buffer))) != 0) {
+        while((n = read(file_descriptor,buffer,file_size * sizeof(char))) != 0) {
 
           //for each substring passed in
           for(int i = 0; i < size; i++){
@@ -202,13 +207,8 @@ int main(int argc, char** argv){
 
         }
 
-        //get ending time then calculate milliseconds past
-        gettimeofday(&end,NULL);
 
-        secs_used = (end.tv_sec - start.tv_sec);
-        micros_used = (secs_used * 1000000 + end.tv_usec) - (start.tv_usec);
-        printf("milliseconds passed: %f\n",micros_used/1000);
-
+        free(buffer);
 
     }
 
