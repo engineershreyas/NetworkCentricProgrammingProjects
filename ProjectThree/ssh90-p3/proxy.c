@@ -19,6 +19,7 @@
  * Globals
  */
 FILE *log_file; /* Log file with one line per HTTP request */
+pthread_mutex_t conn_mutex;
 
 /*
  * Functions not provided to the students
@@ -28,6 +29,16 @@ ssize_t Rio_readn_w(int fd, void *ptr, size_t nbytes);
 ssize_t Rio_readlineb_w(rio_t *rp, void *usrbuf, size_t maxlen);
 void Rio_writen_w(int fd, void *usrbuf, size_t n);
 
+
+// global variables
+ struct sockaddr_in clientaddr;  /* Clinet address structure*/
+ int clientlen;            /* Size in bytes of the client socket address */
+ int listenfd;             /* The proxy's listening descriptor */
+
+
+
+
+
 /*
  * Function prototypes
  */
@@ -35,25 +46,23 @@ int parse_uri(char *uri, char *target_addr, char *path, int  *port);
 void format_log_entry(char *logstring, struct sockaddr_in *sockaddr, char *uri, int size);
 void handle_requests(int fd);
 void thread_function(void *args);
+void main_loop();
 
 /*
  * main - Main routine for the proxy program
  */
 int main(int argc, char **argv)
 {
-  int listenfd;             /* The proxy's listening descriptor */
   int port;                 /* The port the proxy is listening on */
-  int clientlen;            /* Size in bytes of the client socket address */
   int request_count = 0;    /* Number of requests received so far */
-  struct sockaddr_in clientaddr;  /* Clinet address structure*/
-  int *connfd;                     /* socket desciptor for talkign wiht client*/
-  pthread_t tid;
 
 /* Check arguments */
   if (argc != 2) {
     fprintf(stderr, "Usage: %s <port number>\n", argv[0]);
     exit(0);
   }
+
+  printf("Main\n");
 
   /*
    * Ignore any SIGPIPE signals elicited by writing to a connection
@@ -68,21 +77,35 @@ int main(int argc, char **argv)
   /* Inititialize */
   log_file = Fopen(PROXY_LOG, "a");
 
-  /* Wait for and process client connections */
-  while (1) {
-    //error = 0;   //Used to fix a bug
-    clientlen = sizeof(clientaddr);
-    connfd = (int *) Malloc(sizeof(connfd));
-    *connfd = Accept(listenfd, (SA *)&clientaddr, &clientlen);
-
-    Pthread_create(&tid, NULL, (void *)thread_function, connfd);
-
-  }
+  main_loop();
 
   /* Control never reaches here */
   exit(0);
 }
 
+void main_loop(){
+
+  int *connfd;                     /* socket desciptor for talkign wiht client*/
+  pthread_t tid;
+
+  /* Wait for and process client connections */
+  while (1) {
+    printf("waiting\n");
+    //error = 0;   //Used to fix a bug
+    clientlen = sizeof(clientaddr);
+    printf("clientlen\n");
+    connfd = (int *) Malloc(sizeof(connfd));
+    printf("connfd\n");
+    pthread_mutex_lock(&conn_mutex);
+    *connfd = Accept(listenfd, (SA *)&clientaddr, &clientlen);
+    pthread_mutex_unlock(&conn_mutex);
+    printf("accepted\n");
+
+    Pthread_create(&tid, NULL, (void *)thread_function, connfd);
+
+  }
+
+}
 
 /*
  * Rio_readn_w - A wrapper function for rio_readn (csapp.c) that
@@ -231,7 +254,9 @@ void handle_requests(int connfd){
   char buf[MAXLINE];              /* General I/O buffer */
 
   //Used to fix a bug
-  int error = 0;                  /* Used to detect error in reading requests
+  int error = 0;                  /* Used to detect error in reading requests*/
+
+  printf("Handling request\n");
 
   /*
    * Read the entire HTTP request into the request buffer, one line
@@ -243,34 +268,55 @@ void handle_requests(int connfd){
   request_len = 0;
   Rio_readinitb(&rio, connfd);
   while (1) {
+    //printf("buf from handler: %s",buf);
+
     if ((n = Rio_readlineb_w(&rio, buf, MAXLINE)) <= 0) {
-error = 1;//Used to fix a bug
-printf("process_request: client issued a bad request (1).\n");
-close(connfd);
-free(request);
-return;
+        error = 1;//Used to fix a bug
+        printf("process_request: client issued a bad request (1).\n");
+        close(connfd);
+        free(request);
+        break;
     }
 
     /* If not enough room in request buffer, make more room */
-    if (request_len + n + 1 > MAXLINE)
-Realloc(request, MAXLINE*realloc_factor++);
+    if (request_len + n + 1 > MAXLINE){
+      Realloc(request, MAXLINE*realloc_factor++);
+
+    }
 
     strcat(request, buf);
+    //printf("buf: %s",buf);
+
     request_len += n;
 
     /* An HTTP requests is always terminated by a blank line */
-    if (strcmp(buf, "\r\n") == 0)
-return;
+    if (strcmp(buf, "\r\n") == 0){
+      printf("found new line charcter\n");
+      break;
+    }
+
+
+    printf("End of loop...restart\n");
+
   }
+
+  printf("Passed while loop\n");
 
   /*
    * Used to fix a bug
    * if a bad request has been issued then start over
    */
-  if (error)
-    goto restart;
+  if (error){
+    printf("error found\n");
+    main_loop();
+  }
+  else{
+    printf("no error\n");
+  }
 
 
+  //printf("REQUEST : %s",request);
+  printf("\n");
   /*
    * Make sure that this is indeed a GET request
    */
@@ -281,6 +327,8 @@ return;
     return;
   }
   request_uri = request + 4;
+  //printf("request_uri: %s",request_uri);
+  printf("\n");
 
   /*
    * Extract the URI from the request
@@ -288,9 +336,9 @@ return;
   request_uri_end = NULL;
   for (i = 0; i < request_len; i++) {
     if (request_uri[i] == ' ') {
-request_uri[i] = '\0';
-request_uri_end = &request_uri[i];
-return;
+        request_uri[i] = '\0';
+        request_uri_end = &request_uri[i];
+        break;
     }
   }
 
@@ -310,11 +358,10 @@ return;
    * Make sure that the HTTP version field follows the URI
    */
   if (strncmp(request_uri_end + 1, "HTTP/1.0\r\n", strlen("HTTP/1.0\r\n")) &&
-strncmp(request_uri_end + 1, "HTTP/1.1\r\n", strlen("HTTP/1.1\r\n"))) {
-    printf("process_request: client issued a bad request (4).\n");
-    close(connfd);
-    free(request);
-
+    strncmp(request_uri_end + 1, "HTTP/1.1\r\n", strlen("HTTP/1.1\r\n"))) {
+      printf("process_request: client issued a bad request (4).\n");
+      close(connfd);
+      free(request);
     return;
   }
 
@@ -344,6 +391,8 @@ strncmp(request_uri_end + 1, "HTTP/1.1\r\n", strlen("HTTP/1.1\r\n"))) {
     free(request);
     return;
   }
+
+  printf("writing?\n");
   Rio_writen_w(serverfd, "GET /", strlen("GET /"));
   Rio_writen_w(serverfd, pathname, strlen(pathname));
   Rio_writen_w(serverfd, " HTTP/1.0\r\n", strlen(" HTTP/1.0\r\n"));
@@ -360,9 +409,11 @@ strncmp(request_uri_end + 1, "HTTP/1.1\r\n", strlen("HTTP/1.1\r\n"))) {
     Rio_writen_w(connfd, buf, n);
 #if defined(DEBUG)
     printf("Forwarded %d bytes from end server to client\n", n);
-    fflush(stdout);
+    //fflush(stdout);
 #endif
+    printf("bzero\n");
     bzero(buf, MAXLINE);
+    printf("bzero2\n");
   }
 
 
@@ -375,20 +426,21 @@ strncmp(request_uri_end + 1, "HTTP/1.1\r\n", strlen("HTTP/1.1\r\n"))) {
   */
 
   /* Clean up to avoid memory leaks and then return */
+  printf("closing\n");
   close(connfd);
+  printf("closed\n");
   close(serverfd);
   free(request);
 
-restart:
-  handle_requests(connfd);
+
 
 }
 
 void thread_function(void *args){
+  printf("Thread created\n");
   int fd = *(int *)args;
   Pthread_detach(pthread_self());
   Free(args);
   handle_requests(fd);
-  Close(fd);
   Pthread_exit(NULL);
 }
