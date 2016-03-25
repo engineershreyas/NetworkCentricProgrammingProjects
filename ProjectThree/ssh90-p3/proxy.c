@@ -20,6 +20,7 @@
  */
 FILE *log_file; /* Log file with one line per HTTP request */
 pthread_mutex_t conn_mutex;
+pthread_mutex_t log_lock;
 
 /*
  * Functions not provided to the students
@@ -417,13 +418,17 @@ void handle_requests(int connfd){
   }
 
 
-  /*
-   * Log the request to disk
+
+   /* Log the request to disk*/
+
 
   format_log_entry(log_entry, &clientaddr, request_uri, response_len);
+  pthread_mutex_lock(&log_lock);
   fprintf(log_file, "%s %d\n", log_entry, response_len);
   fflush(log_file);
-  */
+  pthread_mutex_unlock(&log_lock);
+
+
 
   /* Clean up to avoid memory leaks and then return */
   printf("closing\n");
