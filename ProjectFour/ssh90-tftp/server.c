@@ -128,6 +128,8 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
 
           sendto(sockfd,bytes,sizeof(b),0,pcliaddr,clilen);
 
+          free(final);
+
         }
         else{
 
@@ -147,7 +149,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
         }
 
           printf("resetting\n");
-          free(final);
+
           memset(filename,0,sizeof(filename));
           memset(mode_str,0,sizeof(filename));
 
