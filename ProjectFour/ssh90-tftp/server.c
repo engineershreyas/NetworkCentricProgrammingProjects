@@ -174,6 +174,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
       }
       else if(opcode == 4){
         //ack
+        printf("ACK\n");
       }
       else if(opcode == 5){
         //error
