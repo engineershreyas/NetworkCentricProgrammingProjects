@@ -69,6 +69,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen){
 
             if(mesg[i] != 0){
               if(!mode){
+                printf("c = %c",mesg[i]);
                 filename[i] = mesg[i];
               }
               else{
