@@ -112,9 +112,10 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen){
         char *msg = "File not found.";
 
         size_t s_len = strlen(msg);
-        char *final = malloc(s_len + 1);
+        char *final = malloc(s_len + 1 + 1);
         strcpy(final,msg);
-        final[s_len] = zero;
+        final[s_len] = '\0';
+        final[s_len + 1] = 0;
         err.err_msg = final;
 
         char bytes[sizeof(err_packet)];
