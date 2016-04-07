@@ -71,20 +71,17 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen){
 
             if(mesg[i] != 0){
               if(!mode){
-                printf("c = %c\n",mesg[i]);
                 filename[f] = mesg[i];
                 //printf("f = %d,filename[f] = %c\n",f,filename[f]);
                 f++;
               }
               else{
-                printf("c2 = %c\n");
                 mode_str[m] = mesg[i];
                 m++;
               }
             }
             else{
               if(!mode){
-                printf("mode switch\n");
                 mode = 1;
               }
               else{
@@ -96,7 +93,6 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen){
 
         }
 
-        printf("filename = %s",filename);
 
         unsigned long host = ntohl(((struct sockaddr_in *)pcliaddr)->sin_addr.s_addr);
         unsigned char a = host >> 24;
