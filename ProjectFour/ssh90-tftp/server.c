@@ -110,6 +110,8 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
 
         if(fp == NULL){
 
+          printf("File not found.\n");
+
           err_packet err;
           err.opcode = 5;
           err.error_code = 1;
@@ -132,6 +134,8 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
 
         }
         else{
+
+          pritnf("File found!\n");
 
           data_packet data;
 
