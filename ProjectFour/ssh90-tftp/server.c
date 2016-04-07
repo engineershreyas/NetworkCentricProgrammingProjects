@@ -8,7 +8,7 @@ int get_opcode(char *buf,size_t buflen, uint16_t *opcode);
 int main(int argc, char **argv){
 
   if(argc < 2){
-    printf("usage: ./server [port]");
+    printf("usage: ./server [port]\n");
     return 0;
   }
 
