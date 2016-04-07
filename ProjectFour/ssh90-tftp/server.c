@@ -135,7 +135,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
         }
         else{
 
-          pritnf("File found!\n");
+          printf("File found!\n");
 
           data_packet data;
 
