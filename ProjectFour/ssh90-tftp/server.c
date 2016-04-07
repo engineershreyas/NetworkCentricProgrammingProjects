@@ -79,6 +79,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen){
             }
             else{
               if(!mode){
+                printf("mode switch\n");
                 mode = 1;
               }
               else{
@@ -89,6 +90,8 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen){
 
 
         }
+
+        printf("filename = %s",filename);
 
         unsigned long host = ntohl(((struct sockaddr_in *)pcliaddr)->sin_addr.s_addr);
         unsigned char a = host >> 24;
