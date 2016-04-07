@@ -38,10 +38,10 @@ int main(int argc, char **argv){
     printf("bind succeeded\n");
   }
 
-  do_stuff(sockfd, (struct sockaddr *) &cliaddr, sizeof(cliaddr));
+  do_stuff(sockfd, (struct sockaddr *) &cliaddr, sizeof(cliaddr),port);
 }
 
-void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen){
+void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port){
   int n;
   socklen_t len;
   uint16_t opcode;
@@ -103,7 +103,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen){
 
         char* type = opcode == 1 ? "RRQ" : "WRQ";
 
-        printf("%s %s %s from %d.%d.%d.%d\n",type,filename,mode_str,a,b,c,d);
+        printf("%s %s %s from %d.%d.%d.%d:%d\n",type,filename,mode_str,a,b,c,d,port);
 
         err_packet err;
         err.opcode = 5;
