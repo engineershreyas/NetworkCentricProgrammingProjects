@@ -15,15 +15,29 @@ int main(int argc, char **argv){
   int sockfd;
   struct sockaddr_in servaddr, cliaddr;
 
+  printf("test 1\n");
+
   int port = atoi(argv[1]);
+
+  printf("test 2\n");
 
 
 
   sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+  printf("test 3\n");
+
   bzero(&servaddr, sizeof(servaddr));
+  printf("test 4\n");
+
   servaddr.sin_family = AF_INET;
+  printf("test 5\n");
+
   servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+  printf("test 6\n");
+
   servaddr.sin_port = htons(port);
+  printf("test 7\n");
+
   int val = bind(sockfd, (struct sockaddr *) &servaddr, sizeof(servaddr));
   printf("bind returned %d",val);
   do_stuff(sockfd, (struct sockaddr *) &cliaddr, sizeof(cliaddr));
