@@ -2,7 +2,7 @@
 
 #define MAXLINE 1024
 
-void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen);
+void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port);
 int get_opcode(char *buf,size_t buflen, uint16_t *opcode);
 
 int main(int argc, char **argv){
@@ -73,7 +73,6 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
             if(mesg[i] != 0){
               if(!mode){
                 filename[f] = mesg[i];
-                //printf("f = %d,filename[f] = %c\n",f,filename[f]);
                 f++;
               }
               else{
