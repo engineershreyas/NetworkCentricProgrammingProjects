@@ -51,11 +51,9 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
   data_packet *data = (data_packet*)mesg;
 
   for ( ; ; ) {
-    printf("looping \n");
     uint16_t b_num;
     len = clilen;
     n = recvfrom(sockfd, mesg, MAXLINE, 0, pcliaddr, &len);
-    printf("mesg = %s",mesg);
     if(get_opcode(mesg,n,&opcode) == 0){
       char filename[MAXLINE];
       int f = 0;
@@ -148,7 +146,6 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
 
         }
 
-          printf("resetting\n");
 
           memset(filename,0,sizeof(filename));
           memset(mode_str,0,sizeof(filename));
@@ -156,7 +153,6 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
           f = 0;
           m = 0;
 
-          printf("reset\n");
 
       }
       else if(opcode == 3){
