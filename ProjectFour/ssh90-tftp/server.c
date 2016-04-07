@@ -15,35 +15,23 @@ int main(int argc, char **argv){
   int sockfd;
   struct sockaddr_in servaddr, cliaddr;
 
-  printf("test 1\n");
 
   int port = atoi(argv[1]);
 
-  printf("test 2\n");
 
 
 
   sockfd = socket(AF_INET, SOCK_DGRAM, 0);
-  printf("test 3, sockfd = %d\n",sockfd);
 
   bzero(&servaddr, sizeof(servaddr));
-  printf("test 4\n");
 
   servaddr.sin_family = AF_INET;
-  printf("test 5\n");
 
   servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-  printf("test 6\n");
 
   servaddr.sin_port = htons(port);
-  printf("test 7\n");
 
-  if(bind(sockfd, (struct sockaddr *) &servaddr, sizeof(servaddr)) == -1){
-      printf("failed\n");
-  }
-  else{
-    printf("succeeded\n");
-  }
+
 
   do_stuff(sockfd, (struct sockaddr *) &cliaddr, sizeof(cliaddr));
 }
@@ -62,9 +50,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen){
   for ( ; ; ) {
     uint16_t b_num;
     len = clilen;
-    printf("for loop\n");
     n = recvfrom(sockfd, mesg, MAXLINE, 0, pcliaddr, &len);
-    printf("n = %d",n);
     if(get_opcode(mesg,n,&opcode) == 0){
       char filename[MAXLINE];
       char mode_str[100];
@@ -105,7 +91,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen){
 
         char* type = opcode == 1 ? "RRQ" : "WRQ";
 
-        printf("%s %s %s from %d.%d.%d.%d",type,filename,mode_str,a,b,c,d);
+        printf("%s %s %s from %d.%d.%d.%d\n",type,filename,mode_str,a,b,c,d);
 
         err_packet err;
         err.opcode = 5;
