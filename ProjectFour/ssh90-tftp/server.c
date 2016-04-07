@@ -15,7 +15,7 @@ int main(int argc, char **argv){
   int sockfd;
   struct sockaddr_in servaddr, cliaddr;
 
-  int port = atoi(arv[1]);
+  int port = atoi(argv[1]);
 
 
 
