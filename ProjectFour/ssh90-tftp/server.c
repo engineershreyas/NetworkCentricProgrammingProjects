@@ -24,7 +24,7 @@ int main(int argc, char **argv){
 
 
   sockfd = socket(AF_INET, SOCK_DGRAM, 0);
-  printf("test 3\n");
+  printf("test 3, sockfd = %d\n",sockfd);
 
   bzero(&servaddr, sizeof(servaddr));
   printf("test 4\n");
