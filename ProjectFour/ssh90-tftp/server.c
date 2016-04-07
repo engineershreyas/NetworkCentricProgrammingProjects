@@ -44,6 +44,7 @@ int main(int argc, char **argv){
   else{
     printf("succeeded\n");
   }
+
   do_stuff(sockfd, (struct sockaddr *) &cliaddr, sizeof(cliaddr));
 }
 
@@ -61,7 +62,9 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen){
   for ( ; ; ) {
     uint16_t b_num;
     len = clilen;
+    printf("for loop\n");
     n = recvfrom(sockfd, mesg, MAXLINE, 0, pcliaddr, &len);
+    printf("n = %d",n);
     if(get_opcode(mesg,n,&opcode) == 0){
       char filename[MAXLINE];
       char mode_str[100];
