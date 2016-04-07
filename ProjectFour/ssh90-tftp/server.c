@@ -122,6 +122,11 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen){
         sendto(sockfd,bytes,sizeof(b),0,pcliaddr,clilen);
 
         free(final);
+        memset(filename,0,sizeof(filename));
+        memset(mode_str,0,sizeof(filename));
+
+        f = 0;
+        m = 0;
 
 
 
