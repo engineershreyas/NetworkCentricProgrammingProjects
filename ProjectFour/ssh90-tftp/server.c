@@ -55,6 +55,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
     uint16_t b_num;
     len = clilen;
     n = recvfrom(sockfd, mesg, MAXLINE, 0, pcliaddr, &len);
+    printf("mesg = %s",mesg);
     if(get_opcode(mesg,n,&opcode) == 0){
       char filename[MAXLINE];
       int f = 0;
