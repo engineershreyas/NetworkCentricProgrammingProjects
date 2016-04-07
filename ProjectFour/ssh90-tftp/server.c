@@ -45,6 +45,8 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
   char mesg[MAXLINE];
   uint16_t block_num = 1;
   size_t nread;
+  int offset = 0;
+  FILE *fp;
 
 
 
@@ -104,7 +106,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
 
         printf("%s %s %s from %d.%d.%d.%d:%d\n",type,filename,mode_str,a,b,c,d,port);
 
-        FILE *fp = fopen(filename,"r");
+        fp = fopen(filename,"r");
 
         if(fp == NULL){
 
@@ -135,12 +137,17 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
 
 
           char dat[512];
-          if(fread(dat,1,sizeof(dat),fp) > 0){
-            //stuf
+          if((nread = fread(dat,1,sizeof(dat),fp)) > 0){
+            data.data = dat;
           }
           data.opcode = 3;
           data.block_num = block_num;
 
+
+          char bytes[sizeof(data)];
+          memcpy(bytes,&data,sizeof(data));
+
+          sendto(sockfd,bytes,sizeof(b),0,pcliaddr,clilen);
 
 
 
