@@ -1,14 +1,21 @@
 #include "server.h"
 
-#define SERV_PORT 3000
 #define MAXLINE 1024
 
 void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen);
 int get_opcode(char *buf,size_t buflen, uint16_t *opcode);
 
 int main(int argc, char **argv){
+
+  if(argc < 2){
+    printf("usage: ./server [port]");
+    return 0;
+  }
+
   int sockfd;
   struct sockaddr_in servaddr, cliaddr;
+
+  int port = atoi(arv[1]);
 
 
 
@@ -16,7 +23,7 @@ int main(int argc, char **argv){
   bzero(&servaddr, sizeof(servaddr));
   servaddr.sin_family = AF_INET;
   servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-  servaddr.sin_port = htons(SERV_PORT);
+  servaddr.sin_port = htons(port);
   bind(sockfd, (struct sockaddr *) &servaddr, sizeof(servaddr));
   do_stuff(sockfd, (struct sockaddr *) &cliaddr, sizeof(cliaddr));
 }
