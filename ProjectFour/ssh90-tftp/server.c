@@ -149,6 +149,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
 
 
           char bytes[sizeof(data)];
+          printf("sizeof(data) = %d", sizeof(data));
           memcpy(bytes,&data,sizeof(data));
 
           sendto(sockfd,bytes,sizeof(b),0,pcliaddr,clilen);
