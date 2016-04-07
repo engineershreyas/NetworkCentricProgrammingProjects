@@ -38,7 +38,9 @@ int main(int argc, char **argv){
   servaddr.sin_port = htons(port);
   printf("test 7\n");
 
-  int val = bind(sockfd, (struct sockaddr *) &servaddr, sizeof(servaddr));
+  if(bind(sockfd, (struct sockaddr *) &servaddr, sizeof(servaddr)) == -1){
+      printf("failed\n");
+  }
   printf("bind returned %d",val);
   do_stuff(sockfd, (struct sockaddr *) &cliaddr, sizeof(cliaddr));
 }
