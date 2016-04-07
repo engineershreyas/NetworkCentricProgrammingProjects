@@ -73,6 +73,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen){
               if(!mode){
                 printf("c = %c\n",mesg[i]);
                 filename[f] = mesg[i];
+                printf("f = %d,filename[f] = %c",f,filename[f]);
                 f++;
               }
               else{
