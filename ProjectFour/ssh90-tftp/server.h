@@ -28,7 +28,7 @@ typedef struct data_packet {
 
   uint16_t opcode;
   uint16_t block_num;
-  char* data;
+  char data[512];
 
 } data_packet;
 

@@ -142,7 +142,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
 
           char dat[512];
           if((nread = fread(dat,1,sizeof(dat),fp)) > 0){
-            data.data = dat;
+            strcpy(data.data,dat);
           }
           data.opcode = 3;
           data.block_num = block_num;
@@ -152,7 +152,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
           memcpy(bytes,&data,sizeof(data));
 
           int lol = sendto(sockfd,bytes,sizeof(bytes),0,pcliaddr,clilen);
-          printf("bytes sent = %d",lol);
+          printf("bytes sent = %d\n",lol);
 
 
         }
