@@ -58,7 +58,9 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen){
     n = recvfrom(sockfd, mesg, MAXLINE, 0, pcliaddr, &len);
     if(get_opcode(mesg,n,&opcode) == 0){
       char filename[MAXLINE];
+      int f = 0;
       char mode_str[100];
+      int m = 0;
 
       if(opcode == 1 || opcode == 2){
         //rrq or wrq
@@ -70,11 +72,13 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen){
             if(mesg[i] != 0){
               if(!mode){
                 printf("c = %c\n",mesg[i]);
-                filename[i] = mesg[i];
+                filename[f] = mesg[i];
+                f++;
               }
               else{
                 printf("c2 = %c\n");
-                mode_str[i] = mesg[i];
+                mode_str[m] = mesg[i];
+                m++;
               }
             }
             else{
