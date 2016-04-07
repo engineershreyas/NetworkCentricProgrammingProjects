@@ -53,6 +53,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen){
   data_packet *data = (data_packet*)mesg;
 
   for ( ; ; ) {
+    printf("looping \n");
     uint16_t b_num;
     len = clilen;
     n = recvfrom(sockfd, mesg, MAXLINE, 0, pcliaddr, &len);
@@ -121,6 +122,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen){
 
         sendto(sockfd,bytes,sizeof(b),0,pcliaddr,clilen);
 
+        printf("resetting\n");
         free(final);
         memset(filename,0,sizeof(filename));
         memset(mode_str,0,sizeof(filename));
@@ -128,6 +130,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen){
         f = 0;
         m = 0;
 
+        printf("reset\n");
 
 
       }
