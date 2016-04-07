@@ -18,9 +18,6 @@ int main(int argc, char **argv){
 
   int port = atoi(argv[1]);
 
-
-
-
   sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 
   bzero(&servaddr, sizeof(servaddr));
@@ -46,7 +43,8 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
   socklen_t len;
   uint16_t opcode;
   char mesg[MAXLINE];
-
+  uint16_t block_num = 1;
+  size_t nread;
 
 
 
@@ -94,6 +92,9 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
         }
 
 
+
+
+
         unsigned long host = ntohl(((struct sockaddr_in *)pcliaddr)->sin_addr.s_addr);
         unsigned char a = host >> 24;
         unsigned char b = (host >> 16) & 0xff;
@@ -104,34 +105,55 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
 
         printf("%s %s %s from %d.%d.%d.%d:%d\n",type,filename,mode_str,a,b,c,d,port);
 
-        err_packet err;
-        err.opcode = 5;
-        err.error_code = 1;
-        char zero = 0;
-        char *msg = "File not found.";
+        FILE *fp = fopen(filename,"r");
 
-        size_t s_len = strlen(msg);
-        char *final = malloc(s_len + 1 + 1);
-        strcpy(final,msg);
-        final[s_len] = '\0';
-        final[s_len + 1] = 0;
-        err.err_msg = final;
+        if(fp == NULL){
 
-        char bytes[sizeof(err_packet)];
-        memcpy(bytes,&err,sizeof(err_packet));
+          err_packet err;
+          err.opcode = 5;
+          err.error_code = 1;
+          char zero = 0;
+          char *msg = "File not found.";
 
-        sendto(sockfd,bytes,sizeof(b),0,pcliaddr,clilen);
+          size_t s_len = strlen(msg);
+          char *final = malloc(s_len + 1 + 1);
+          strcpy(final,msg);
+          final[s_len] = '\0';
+          final[s_len + 1] = 0;
+          err.err_msg = final;
 
-        printf("resetting\n");
-        free(final);
-        memset(filename,0,sizeof(filename));
-        memset(mode_str,0,sizeof(filename));
+          char bytes[sizeof(err_packet)];
+          memcpy(bytes,&err,sizeof(err_packet));
 
-        f = 0;
-        m = 0;
+          sendto(sockfd,bytes,sizeof(b),0,pcliaddr,clilen);
 
-        printf("reset\n");
+        }
+        else{
 
+          data_packet data;
+
+
+          char dat[512];
+          if(fread(dat,1,sizeof(dat),fp) > 0){
+            //stuf
+          }
+          data.opcode = 3;
+          data.block_num = block_num;
+
+
+
+
+        }
+
+          printf("resetting\n");
+          free(final);
+          memset(filename,0,sizeof(filename));
+          memset(mode_str,0,sizeof(filename));
+
+          f = 0;
+          m = 0;
+
+          printf("reset\n");
 
       }
       else if(opcode == 3){
