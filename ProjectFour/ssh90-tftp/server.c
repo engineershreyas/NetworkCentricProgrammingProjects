@@ -41,6 +41,9 @@ int main(int argc, char **argv){
   if(bind(sockfd, (struct sockaddr *) &servaddr, sizeof(servaddr)) == -1){
       printf("failed\n");
   }
+  else{
+    printf("succeeded\n");
+  }
   do_stuff(sockfd, (struct sockaddr *) &cliaddr, sizeof(cliaddr));
 }
 
