@@ -125,8 +125,8 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
           final[s_len + 1] = 0;
           err.err_msg = final;
 
-          char bytes[sizeof(err_packet)];
-          memcpy(bytes,&err,sizeof(err_packet));
+          char bytes[sizeof(err)];
+          memcpy(bytes,&err,sizeof(err));
 
           int lol = sendto(sockfd,bytes,sizeof(bytes),0,pcliaddr,clilen);
           printf("bytes sent = %d\n",lol);
