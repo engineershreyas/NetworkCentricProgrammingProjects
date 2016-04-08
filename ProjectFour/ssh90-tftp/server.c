@@ -140,7 +140,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
           data_packet data;
 
 
-          char dat[512];
+          char dat[511];
           if((nread = fread(dat,1,sizeof(dat),fp)) > 0){
             strcpy(data.data,dat);
           }
@@ -182,7 +182,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
 
     }
     else{
-      printf("Error decoding opcode");
+      printf("Error decoding opcode\n");
     }
 
   }
