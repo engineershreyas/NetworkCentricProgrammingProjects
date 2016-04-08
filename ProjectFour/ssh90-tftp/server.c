@@ -130,7 +130,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
 
           char bytes[20];
 
-          bytes[0] = 0
+          bytes[0] = 0;
           bytes[1] = 5;
           bytes[2] = 0;
           bytes[3] = 1;
