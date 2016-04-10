@@ -50,7 +50,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
 
 
 
-  data_packet *data = (data_packet*)mesg;
+  
 
   for ( ; ; ) {
     uint16_t b_num;
