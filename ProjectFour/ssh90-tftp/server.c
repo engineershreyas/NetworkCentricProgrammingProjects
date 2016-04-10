@@ -174,6 +174,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
 
           memset(filename,0,sizeof(filename));
           memset(mode_str,0,sizeof(filename));
+          memset(mesg,0,sizeof(mesg));
 
           f = 0;
           m = 0;
