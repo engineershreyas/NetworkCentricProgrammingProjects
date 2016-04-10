@@ -112,21 +112,6 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
 
           printf("File not found.\n");
 
-          err_packet err;
-          err.opcode = 5;
-          err.error_code = 1;
-          char zero = 0;
-          char *msg = "File not found.";
-
-          size_t s_len = strlen(msg);
-          char *final = malloc(s_len + 1 + 1);
-          strcpy(final,msg);
-          final[s_len] = '\0';
-          final[s_len + 1] = 0;
-          err.err_msg = final;
-
-          //char bytes[sizeof(err)];
-          //memcpy(bytes,&err,sizeof(err));
 
           char bytes[20];
 
@@ -161,22 +146,28 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
 
           printf("File found!\n");
 
-          data_packet data;
 
 
-          char dat[511];
+          char bytes[516];
+          bytes[0] = 0;
+          bytes[1] = 3;
+          char lo = block_num & 0xFF;
+          char hi = block_num >> 8;
+          bytes[2] = hi;
+          bytes[3] = lo;
+          char dat[512];
+          char dest[512];
+          char final[516];
           if((nread = fread(dat,1,sizeof(dat),fp)) > 0){
-            strcpy(data.data,dat);
+            strcpy(dest,dat);
           }
-          data.opcode = 3;
-          data.block_num = block_num;
 
+          memcpy(final,bytes,4);
+          memcpy(final + 4,dest,512);
 
-          char bytes[sizeof(data)];
-          memcpy(bytes,&data,sizeof(data));
-
-          int lol = sendto(sockfd,bytes,sizeof(bytes),0,pcliaddr,clilen);
+          int lol = sendto(sockfd,final,sizeof(final),0,pcliaddr,clilen);
           printf("bytes sent = %d\n",lol);
+          block_num++;
 
 
         }
