@@ -49,13 +49,13 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
   FILE *fp;
 
 
+  char mesg[MAXLINE];
 
-  
+
 
   for ( ; ; ) {
     uint16_t b_num;
     len = clilen;
-    char mesg[MAXLINE];
     n = recvfrom(sockfd, mesg, MAXLINE, 0, pcliaddr, &len);
     if(get_opcode(mesg,n,&opcode) == 0){
       char filename[MAXLINE];
