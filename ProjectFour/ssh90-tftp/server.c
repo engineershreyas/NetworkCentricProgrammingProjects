@@ -42,7 +42,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
   int n;
   socklen_t len;
   uint16_t opcode;
-  char mesg[MAXLINE];
+
   uint16_t block_num = 1;
   size_t nread;
   int offset = 0;
@@ -55,6 +55,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
   for ( ; ; ) {
     uint16_t b_num;
     len = clilen;
+    char mesg[MAXLINE];
     n = recvfrom(sockfd, mesg, MAXLINE, 0, pcliaddr, &len);
     if(get_opcode(mesg,n,&opcode) == 0){
       char filename[MAXLINE];
