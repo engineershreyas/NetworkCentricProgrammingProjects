@@ -167,7 +167,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
           memcpy(final + 4,dest,512);
           */
 
-          char bytes[515];
+          char bytes[516];
 
           bytes[0] = 0;
           bytes[1] = 3;
@@ -188,7 +188,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
           bytes[16] = 'K';
           bytes[17] = 'S';
           bytes[18] = '.';
-          for(int i = 19; i < 515; i++){
+          for(int i = 19; i < 516; i++){
             bytes[i] = 's';
           }
 
