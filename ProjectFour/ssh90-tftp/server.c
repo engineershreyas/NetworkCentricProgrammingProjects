@@ -43,7 +43,7 @@ int main(int argc, char **argv){
     printf("bind succeeded\n");
   }
 
-  if(connect(sockfd, dstinfo->ai_addr, dstinfo->ai_addrlen) ! = 0){
+  if(connect(sockfd, dstinfo->ai_addr, dstinfo->ai_addrlen) != 0){
 
     printf("connect failed\n");
 
