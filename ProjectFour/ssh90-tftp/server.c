@@ -79,7 +79,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
               }
               else{
                 mode_str[m] = mesg[i];
-                printf("c = %c\n",mode_str[f]);
+                printf("c = %c\n",mode_str[m]);
                 m++;
               }
             }
