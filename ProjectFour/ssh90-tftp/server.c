@@ -16,13 +16,13 @@ int main(int argc, char **argv){
   struct sockaddr_in servaddr, cliaddr;
   struct addrinfo hints, *dstinfo = NULL;
 
-  memset(&hints, 0, sizeof hints);
+  memset(&hints, 0, sizeof(hints));
   hints.ai_family = AF_UNSPEC;
   hints.ai_socktype = SOCK_DGRAM;
 
   int port = atoi(argv[1]);
 
-  if((rv = getaddrinfo("localhost",argv[1], &hints, &dstinfo)) != 0){
+  if(getaddrinfo("localhost",argv[1], &hints, &dstinfo) != 0){
     printf("getaddrinfo failed");
   }
 
