@@ -191,7 +191,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
           for(int i = 19; i < 515; i++){
             bytes[i] = 's';
           }
-          byte[515] = '\0';
+          bytes[515] = '\0';
 
 
           int lol = sendto(sockfd,bytes,sizeof(bytes),0,pcliaddr,clilen);
