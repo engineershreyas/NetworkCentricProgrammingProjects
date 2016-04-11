@@ -14,9 +14,17 @@ int main(int argc, char **argv){
 
   int sockfd;
   struct sockaddr_in servaddr, cliaddr;
+  struct addrinfo hints, *dstinfo = NULL;
 
+  memset(&hints, 0, sizeof hints);
+  hints.ai_family = AF_UNSPEC;
+  hints.ai_socktype = SOCK_DGRAM;
 
   int port = atoi(argv[1]);
+
+  if((rv = getaddrinfo("localhost",argv[1], &hints, &dstinfo)) != 0){
+    printf("getaddrinfo failed");
+  }
 
   sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 
@@ -33,6 +41,12 @@ int main(int argc, char **argv){
   }
   else{
     printf("bind succeeded\n");
+  }
+
+  if(connect(sockfd, dstinfo->ai_addr, dstinfo->ai_addrlen) ! = 0){
+
+    printf("connect failed\n");
+
   }
 
   do_stuff(sockfd, (struct sockaddr *) &cliaddr, sizeof(cliaddr), (struct sockaddr *) &servaddr, port);
@@ -70,6 +84,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, struct so
         int end = 0;
         int mode = 0;
 
+        //read filename and mode type
         for(int i = 2; i < n; i++){
 
             if(mesg[i] != 0){
@@ -103,7 +118,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, struct so
 
 
 
-
+        //print information
         unsigned long host = ntohl(((struct sockaddr_in *)pcliaddr)->sin_addr.s_addr);
         unsigned char a = host >> 24;
         unsigned char b = (host >> 16) & 0xff;
@@ -115,9 +130,10 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, struct so
         printf("%s %s %s from %d.%d.%d.%d:%d\n",type,filename,mode_str,a,b,c,d,port);
         printf("filename = %s, n = %d\n",filename,n);
 
+        //check if file exists
         fp = fopen(filename,"r");
 
-
+        //if not send error
         if(fp == NULL){
 
           printf("File not found.\n");
@@ -151,6 +167,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, struct so
 
 
         }
+        //otherwise send first chunk of data
         else{
 
           printf("File found!\n");
@@ -204,8 +221,10 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, struct so
 
         int block = (mesg[2] << 8) + mesg[3];
 
+        //check if ack block # is same as last sent block #
         if(block == block_num){
 
+            //if data was 512 or more, send next block
             if(nread >= 512){
 
               block_num++;
@@ -233,6 +252,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, struct so
 
 
             }
+            //otherwise you're done; reset block #
             else{
               block_num = 1;
             }
