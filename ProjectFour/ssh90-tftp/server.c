@@ -56,15 +56,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, struct so
   for ( ; ; ) {
     uint16_t b_num;
     len = clilen;
-    if(sockfd != 0) printf("sockfd = %d",sockfd);
-    else{
 
-      sockfd = socket(AF_INET, SOCK_DGRAM, 0);
-      printf("new sockfd = %d",sockfd);
-
-
-
-    }
     n = recvfrom(sockfd, mesg, MAXLINE, 0, pcliaddr, &len);
     if(n != -1){
     if(get_opcode(mesg,n,&opcode) == 0){
@@ -154,7 +146,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, struct so
           bytes[18] = '.';
           bytes[19] = '\0';
 
-          int lol = sendto(sockfd,bytes,sizeof(bytes),0,pcliaddr,clilen);
+          int lol = sendto(sockfd,bytes,sizeof(bytes),0,pcliaddr,&len);
           printf("bytes sent = %d\n",lol);
 
 
