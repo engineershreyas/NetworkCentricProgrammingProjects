@@ -35,10 +35,10 @@ int main(int argc, char **argv){
     printf("bind succeeded\n");
   }
 
-  do_stuff(sockfd, (struct sockaddr *) &cliaddr, sizeof(cliaddr),port);
+  do_stuff(sockfd, (struct sockaddr *) &cliaddr, sizeof(cliaddr), (struct sockaddr *) &servaddr, port);
 }
 
-void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port){
+void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, struct sockaddr *servaddr int port){
   int n;
   socklen_t len;
   uint16_t opcode;
@@ -57,6 +57,17 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
     uint16_t b_num;
     len = clilen;
     if(sockfd != 0) printf("sockfd = %d",sockfd);
+    else{
+
+      sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+      if(bind(sockfd, servaddr, sizeof(servaddr)) == -1){
+          printf("bind failed\n");
+      }
+      else{
+        printf("bind succeeded\n");
+      }
+
+    }
     n = recvfrom(sockfd, mesg, MAXLINE, 0, pcliaddr, &len);
     if(n != -1){
     if(get_opcode(mesg,n,&opcode) == 0){
@@ -196,9 +207,11 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
           bytes[16] = 'K';
           bytes[17] = 'S';
           bytes[18] = '.';
+
           for(int i = 19; i < 515; i++){
             bytes[i] = 's';
           }
+
           bytes[515] = '\0';
 
 
