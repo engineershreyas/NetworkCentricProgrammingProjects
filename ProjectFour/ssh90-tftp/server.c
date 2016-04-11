@@ -60,12 +60,9 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, struct so
     else{
 
       sockfd = socket(AF_INET, SOCK_DGRAM, 0);
-      if(bind(sockfd, servaddr, sizeof(servaddr)) == -1){
-          printf("bind failed\n");
-      }
-      else{
-        printf("bind succeeded\n");
-      }
+      printf("new sockfd = %d",sockfd);
+
+
 
     }
     n = recvfrom(sockfd, mesg, MAXLINE, 0, pcliaddr, &len);
