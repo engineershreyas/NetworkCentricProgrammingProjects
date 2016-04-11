@@ -1,6 +1,6 @@
 #include "server.h"
 
-#define MAXLINE 1024
+#define MAXLINE 516
 
 void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port);
 int get_opcode(char *buf,size_t buflen, uint16_t *opcode);
