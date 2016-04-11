@@ -14,7 +14,8 @@ int main(int argc, char **argv){
 
   int sockfd;
   struct sockaddr_in servaddr, cliaddr;
-  struct addrinfo hints, *dstinfo = NULL;
+  struct addrinfo hints;
+  struct addrinfo *dstinfo = NULL;
 
   memset(&hints, 0, sizeof(hints));
   hints.ai_family = AF_UNSPEC;
