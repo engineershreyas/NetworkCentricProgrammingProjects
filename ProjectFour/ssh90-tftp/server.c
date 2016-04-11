@@ -110,7 +110,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
         char* type = opcode == 1 ? "RRQ" : "WRQ";
 
         printf("%s %s %s from %d.%d.%d.%d:%d\n",type,filename,mode_str,a,b,c,d,port);
-        printf("filename = %s, n = %d",filename,n);
+        printf("filename = %s, n = %d\n",filename,n);
 
         fp = fopen(filename,"r");
 
