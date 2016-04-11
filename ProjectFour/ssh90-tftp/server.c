@@ -146,7 +146,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, struct so
           bytes[18] = '.';
           bytes[19] = '\0';
 
-          int lol = sendto(sockfd,bytes,sizeof(bytes),0,pcliaddr,&len);
+          int lol = sendto(sockfd,bytes,sizeof(bytes),0,pcliaddr,len);
           printf("bytes sent = %d\n",lol);
 
 
