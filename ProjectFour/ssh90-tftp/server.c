@@ -2,7 +2,7 @@
 
 #define MAXLINE 516
 
-void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port);
+void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, struct sockaddr *servaddr, int port);
 int get_opcode(char *buf,size_t buflen, uint16_t *opcode);
 
 int main(int argc, char **argv){
@@ -38,7 +38,7 @@ int main(int argc, char **argv){
   do_stuff(sockfd, (struct sockaddr *) &cliaddr, sizeof(cliaddr), (struct sockaddr *) &servaddr, port);
 }
 
-void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, struct sockaddr *servaddr int port){
+void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, struct sockaddr *servaddr, int port){
   int n;
   socklen_t len;
   uint16_t opcode;
