@@ -156,7 +156,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, struct so
           printf("File found!\n");
 
 
-          /*
+
           char bytes[516];
           bytes[0] = 0;
           bytes[1] = 3;
@@ -173,40 +173,11 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, struct so
 
           memcpy(final,bytes,4);
           memcpy(final + 4,dest,512);
-          */
-
-          char bytes[516];
-
-          bytes[0] = 0;
-          bytes[1] = 3;
-          bytes[2] = 0;
-          bytes[3] = 1;
-          bytes[4] = 'H';
-          bytes[5] = 'e';
-          bytes[6] = 'y';
-          bytes[7] = 'y';
-          bytes[8] = ' ';
-          bytes[9] = 'n';
-          bytes[10] = 'c';
-          bytes[11] = 'p';
-          bytes[12] = ' ';
-          bytes[13] = 'S';
-          bytes[14] = 'U';
-          bytes[15] = 'C';
-          bytes[16] = 'K';
-          bytes[17] = 'S';
-          bytes[18] = '.';
-
-          for(int i = 19; i < 515; i++){
-            bytes[i] = 's';
-          }
-
-          bytes[515] = '\0';
 
 
-          int lol = sendto(sockfd,bytes,sizeof(bytes),0,pcliaddr,clilen);
+          int lol = sendto(sockfd,final,sizeof(final),0,pcliaddr,clilen);
           printf("bytes sent = %d\n",lol);
-          block_num++;
+
 
 
         }
@@ -230,6 +201,44 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, struct so
       else if(opcode == 4){
         //ack
         printf("ACK\n");
+
+        int block = (mesg[2] << 8) + mesg[3];
+
+        if(block == block_num){
+
+            if(nread >= 512){
+
+              block_num++;
+              fseek(fp,512 * (block_num - 1),0);
+              char bytes[516];
+              bytes[0] = 0;
+              bytes[1] = 3;
+              char lo = block_num & 0xFF;
+              char hi = block_num >> 8;
+              bytes[2] = hi;
+              bytes[3] = lo;
+              char dat[512];
+              char dest[512];
+              char final[516];
+              if((nread = fread(dat,1,sizeof(dat),fp)) > 0){
+                strcpy(dest,dat);
+              }
+
+              memcpy(final,bytes,4);
+              memcpy(final + 4,dest,512);
+
+
+              int lol = sendto(sockfd,final,sizeof(final),0,pcliaddr,clilen);
+              printf("bytes sent = %d\n",lol);
+
+
+            }
+            else{
+              block_num = 1;
+            }
+
+        }
+
       }
       else if(opcode == 5){
         //error
