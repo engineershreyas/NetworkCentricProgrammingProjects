@@ -74,16 +74,18 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
             if(mesg[i] != 0){
               if(!mode){
                 filename[f] = mesg[i];
-                printf("c = %c",filename[f]);
+                printf("c = %c\n",filename[f]);
                 f++;
               }
               else{
                 mode_str[m] = mesg[i];
+                printf("c = %c\n",mode_str[f]);
                 m++;
               }
             }
             else{
               if(!mode){
+                printf("mode_switch\n");
                 mode = 1;
               }
               else{
