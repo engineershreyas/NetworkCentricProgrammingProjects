@@ -148,7 +148,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
           printf("File found!\n");
 
 
-
+          /*
           char bytes[516];
           bytes[0] = 0;
           bytes[1] = 3;
@@ -165,8 +165,32 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
 
           memcpy(final,bytes,4);
           memcpy(final + 4,dest,512);
+          */
 
-          int lol = sendto(sockfd,final,sizeof(final),0,pcliaddr,clilen);
+          char bytes[20];
+
+          bytes[0] = 0;
+          bytes[1] = 3;
+          bytes[2] = 0;
+          bytes[3] = 1;
+          bytes[4] = 'H';
+          bytes[5] = 'e';
+          bytes[6] = 'y';
+          bytes[7] = 'y';
+          bytes[8] = ' ';
+          bytes[9] = 'n';
+          bytes[10] = 'c';
+          bytes[11] = 'p';
+          bytes[12] = ' ';
+          bytes[13] = 'S';
+          bytes[14] = 'U';
+          bytes[15] = 'C';
+          bytes[16] = 'K';
+          bytes[17] = 'S';
+          bytes[18] = '.';
+          bytes[19] = '\0';
+
+          int lol = sendto(sockfd,bytes,sizeof(bytes),0,pcliaddr,clilen);
           printf("bytes sent = %d\n",lol);
           block_num++;
 
