@@ -167,7 +167,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
           memcpy(final + 4,dest,512);
           */
 
-          char bytes[516];
+          char bytes[515];
 
           bytes[0] = 0;
           bytes[1] = 3;
@@ -191,7 +191,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
           for(int i = 19; i < 515; i++){
             bytes[i] = 's';
           }
-          bytes[515] = 's';
+
 
           int lol = sendto(sockfd,bytes,sizeof(bytes),0,pcliaddr,clilen);
           printf("bytes sent = %d\n",lol);
