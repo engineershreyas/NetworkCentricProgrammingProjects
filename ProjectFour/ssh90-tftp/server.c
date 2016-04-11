@@ -56,7 +56,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
   for ( ; ; ) {
     uint16_t b_num;
     len = clilen;
-    printf("sockfd = %d",sockfd);
+    if(sockfd != 0) printf("sockfd = %d",sockfd);
     n = recvfrom(sockfd, mesg, MAXLINE, 0, pcliaddr, &len);
     if(n != -1){
     if(get_opcode(mesg,n,&opcode) == 0){
