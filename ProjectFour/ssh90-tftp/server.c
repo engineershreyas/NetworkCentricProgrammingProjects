@@ -90,6 +90,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
                 mode = 1;
               }
               else{
+                mode_str[m] = '\0';
                 end = 1;
                 break;
               }
