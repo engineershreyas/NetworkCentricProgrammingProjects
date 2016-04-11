@@ -98,7 +98,9 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
         }
 
 
-
+        char ffilename[sizeof(filename) + 1];
+        strcpy(ffilename,filename);
+        ffilename[sizeof(ffilename)] = '\0';
 
 
         unsigned long host = ntohl(((struct sockaddr_in *)pcliaddr)->sin_addr.s_addr);
@@ -109,10 +111,10 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
 
         char* type = opcode == 1 ? "RRQ" : "WRQ";
 
-        printf("%s %s %s from %d.%d.%d.%d:%d\n",type,filename,mode_str,a,b,c,d,port);
-        printf("filename = %s, n = %d\n",filename,n);
+        printf("%s %s %s from %d.%d.%d.%d:%d\n",type,ffilename,mode_str,a,b,c,d,port);
+        printf("ffilename = %s, n = %d\n",ffilename,n);
 
-        fp = fopen(filename,"r");
+        fp = fopen(ffilename,"r");
 
         if(fp == NULL){
 
