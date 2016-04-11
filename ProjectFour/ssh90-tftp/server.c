@@ -98,9 +98,9 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
         }
 
 
-        char ffilename[sizeof(filename) + 1];
+        char *ffilename = malloc(strlen(filename) + 1];
         strcpy(ffilename,filename);
-        ffilename[sizeof(ffilename)] = '\0';
+        ffilename[strlen(filename) + 1] = '\0';
 
 
         unsigned long host = ntohl(((struct sockaddr_in *)pcliaddr)->sin_addr.s_addr);
@@ -115,6 +115,8 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
         printf("ffilename = %s, n = %d\n",ffilename,n);
 
         fp = fopen(ffilename,"r");
+
+        free(ffilename);
 
         if(fp == NULL){
 
