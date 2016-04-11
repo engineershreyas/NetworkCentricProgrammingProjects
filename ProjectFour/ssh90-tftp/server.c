@@ -98,7 +98,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, int port)
         }
 
 
-        char *ffilename = malloc(strlen(filename) + 1];
+        char *ffilename = malloc(strlen(filename) + 1);
         strcpy(ffilename,filename);
         ffilename[strlen(filename) + 1] = '\0';
 
