@@ -23,10 +23,6 @@ int main(int argc, char **argv){
 
   int port = atoi(argv[1]);
 
-  if(getaddrinfo("localhost",argv[1], &hints, &dstinfo) != 0){
-    printf("getaddrinfo failed");
-  }
-
   sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 
   bzero(&servaddr, sizeof(servaddr));
@@ -37,18 +33,8 @@ int main(int argc, char **argv){
 
   servaddr.sin_port = htons(port);
 
-  if(bind(sockfd, (struct sockaddr *) &servaddr, sizeof(servaddr)) == -1){
-      printf("bind failed\n");
-  }
-  else{
-    printf("bind succeeded\n");
-  }
+  bind(sockfd, (struct sockaddr *) &servaddr, sizeof(servaddr))
 
-  if(connect(sockfd, dstinfo->ai_addr, dstinfo->ai_addrlen) != 0){
-
-    printf("connect failed\n");
-
-  }
 
   do_stuff(sockfd, (struct sockaddr *) &cliaddr, sizeof(cliaddr), (struct sockaddr *) &servaddr, port);
 }
@@ -66,12 +52,19 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, struct so
 
   char mesg[MAXLINE];
 
+  fd_set rset;
+  void sig_chld(int);
+  int nready;
 
+  signal(SIGCHLD,sig_chld);
+
+  FD_ZERO(&rset);
 
   for ( ; ; ) {
     uint16_t b_num;
     len = clilen;
-
+    FD_SET(sockfd, &rset);
+    if((nready = ))
     n = recvfrom(sockfd, mesg, MAXLINE, 0, pcliaddr, &len);
     if(n != -1){
     if(get_opcode(mesg,n,&opcode) == 0){
@@ -91,19 +84,16 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, struct so
             if(mesg[i] != 0){
               if(!mode){
                 filename[f] = mesg[i];
-                printf("c = %c\n",filename[f]);
                 f++;
               }
               else{
                 mode_str[m] = mesg[i];
-                printf("c = %c\n",mode_str[m]);
                 m++;
               }
             }
             else{
               if(!mode){
                 filename[f] = '\0';
-                printf("mode_switch\n");
                 mode = 1;
               }
               else{
@@ -129,7 +119,6 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, struct so
         char* type = opcode == 1 ? "RRQ" : "WRQ";
 
         printf("%s %s %s from %d.%d.%d.%d:%d\n",type,filename,mode_str,a,b,c,d,port);
-        printf("filename = %s, n = %d\n",filename,n);
 
         //check if file exists
         fp = fopen(filename,"r");
@@ -137,7 +126,6 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, struct so
         //if not send error
         if(fp == NULL){
 
-          printf("File not found.\n");
 
 
           char bytes[20];
@@ -164,15 +152,11 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, struct so
           bytes[19] = '\0';
 
           int lol = sendto(sockfd,bytes,sizeof(bytes),0,pcliaddr,len);
-          printf("bytes sent = %d\n",lol);
 
 
         }
         //otherwise send first chunk of data
         else{
-
-          printf("File found!\n");
-
 
 
           char bytes[516];
@@ -189,12 +173,12 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, struct so
             strcpy(dest,dat);
           }
 
+
           memcpy(final,bytes,4);
           memcpy(final + 4,dest,512);
 
 
           int lol = sendto(sockfd,final,sizeof(final),0,pcliaddr,clilen);
-          printf("bytes sent = %d\n",lol);
 
 
 
@@ -212,13 +196,9 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, struct so
       }
       else if(opcode == 3){
         //data
-
-
-
       }
       else if(opcode == 4){
         //ack
-        printf("ACK\n");
 
         int block = (mesg[2] << 8) + mesg[3];
 
@@ -237,25 +217,27 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, struct so
               char hi = block_num >> 8;
               bytes[2] = hi;
               bytes[3] = lo;
-              char dat[512];
-              char dest[512];
-              char final[516];
-              if((nread = fread(dat,1,sizeof(dat),fp)) > 0){
-                strcpy(dest,dat);
-              }
-
-              memcpy(final,bytes,4);
-              memcpy(final + 4,dest,512);
+              char *dat;
 
 
-              int lol = sendto(sockfd,final,sizeof(final),0,pcliaddr,clilen);
-              printf("bytes sent = %d\n",lol);
+              if((nread = fread(dat,1,512,fp)) > 0){
+
+                char *final = malloc(4 + strlen(dat));
+
+                memcpy(final,bytes,4);
+                memcpy(final + 4,dat,strlen(dat));
+
+                int lol = sendto(sockfd,final,sizeof(final),0,pcliaddr,clilen);
+
+
+              } 
 
 
             }
             //otherwise you're done; reset block #
             else{
               block_num = 1;
+              fclose(fp);
             }
 
         }
@@ -266,9 +248,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, struct so
       }
 
     }
-    else{
-      printf("Error decoding opcode\n");
-    }
+
   }
 
 
