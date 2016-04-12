@@ -58,7 +58,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, struct so
 
 
 
-  
+
 
   for ( ; ; ) {
     uint16_t b_num;
@@ -166,19 +166,19 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, struct so
           char hi = block_num >> 8;
           bytes[2] = hi;
           bytes[3] = lo;
-          char dat[512];
-          char dest[512];
-          char final[516];
-          if((nread = fread(dat,1,sizeof(dat),fp)) > 0){
-            strcpy(dest,dat);
+          char *dat;
+          if((nread = fread(dat,1,512,fp)) > 0){
+
+            char *final = malloc(4 + strlen(dat));
+
+            memcpy(final,bytes,4);
+            memcpy(final + 4,dat,512);
+
+
+            int lol = sendto(sockfd,final,sizeof(final),0,pcliaddr,clilen);
+
+
           }
-
-
-          memcpy(final,bytes,4);
-          memcpy(final + 4,dest,512);
-
-
-          int lol = sendto(sockfd,final,sizeof(final),0,pcliaddr,clilen);
 
 
 
