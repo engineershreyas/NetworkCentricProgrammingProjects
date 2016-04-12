@@ -33,7 +33,7 @@ int main(int argc, char **argv){
 
   servaddr.sin_port = htons(port);
 
-  bind(sockfd, (struct sockaddr *) &servaddr, sizeof(servaddr))
+  bind(sockfd, (struct sockaddr *) &servaddr, sizeof(servaddr));
 
 
   do_stuff(sockfd, (struct sockaddr *) &cliaddr, sizeof(cliaddr), (struct sockaddr *) &servaddr, port);
@@ -53,18 +53,18 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, struct so
   char mesg[MAXLINE];
 
   fd_set rset;
-  void sig_chld(int);
+
   int nready;
 
-  signal(SIGCHLD,sig_chld);
 
-  FD_ZERO(&rset);
+
+  
 
   for ( ; ; ) {
     uint16_t b_num;
     len = clilen;
-    FD_SET(sockfd, &rset);
-    if((nready = ))
+
+
     n = recvfrom(sockfd, mesg, MAXLINE, 0, pcliaddr, &len);
     if(n != -1){
     if(get_opcode(mesg,n,&opcode) == 0){
@@ -230,7 +230,7 @@ void do_stuff(int sockfd, struct sockaddr *pcliaddr, socklen_t clilen, struct so
                 int lol = sendto(sockfd,final,sizeof(final),0,pcliaddr,clilen);
 
 
-              } 
+              }
 
 
             }
